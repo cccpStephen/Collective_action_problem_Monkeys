@@ -32,8 +32,6 @@ pseudocode
     self.file_pieces ← Empty set # File pieces self own
     self.peers ← Empty list #the neigbor it connect to
     self.current_requests ← 0 # Current number of requests from ur peer    
-    
-    
     method ADD_PEER(peer)
        self.peers add (peer) to its neighbors
     end method
@@ -69,7 +67,7 @@ pseudocode
        end while
     end method
 
-     procedure RUN_SIMULATION(num_peers)
+procedure RUN_SIMULATION(num_peers)
     env ← Create simpy environment
     peers ← Empty list
     animation ← Initialize Animation object 
