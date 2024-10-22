@@ -1,6 +1,8 @@
 # Dynamic P2P File Transfer Simulation with Real-Time Visualization
 
 Expectations for Code Behavior and Real-Time Visualization
+
+
 1.System starts and initializes
           Random file size generated
           File divided into 10 pieces by default
@@ -24,33 +26,6 @@ Expectations for Code Behavior and Real-Time Visualization
 
 
 pseudocode
- procedure RUN_SIMULATION(num_peers)
-    env ← Create simpy environment
-    peers ← Empty list
-    animation ← Initialize Animation object 
-    Peer.file_size ← Random value between 50 and 200 # assume file size is 50-200 MB.
-    Peer.piece_size ← Peer.file_size / TOTAL_PIECES #split the file into pieces
-    animation.generate_peers() # run the animation method
-    for i = 0 to num_peers - 1 do # num_peer is the input of RUN_SIMULATION, which refer to the number of peers at the beginning of the game.
-        upload_speed ← Random value between 1 and 5
-       download_speed ← Random value between 1 and 5 #initialize the peers abandwith
-       peer ← Create Peer with id i, upload_speed, download_speed, animation_object
-       add (peer) to a list of peer, peers
-       if i = 0 then
-           seeder/peer(0).file_pieces ← All file pieces/whole file # the seed has all file
-       else
-           other peer.file_pieces ← Random selection of file pieces
-    end for
-    for peer in peers do #connect all the peers
-       for other_peer in peers do
-           if peer ≠ other_peer then
-               peer.add (other_peer) to its neighbor
-           end if
-       end for
-    end for
-    set env/environment end time as SIMULATION_TIME
-    generate animation with name as animation.mp4, total 100 frame, 0.1 sec between each frame
- end procedure
 
 
  class PEER(env, id, upload_speed, download_speed, animation)
@@ -93,4 +68,32 @@ pseudocode
            yield env.all_of(request_tasks)
        end while
     end method
+
+     procedure RUN_SIMULATION(num_peers)
+    env ← Create simpy environment
+    peers ← Empty list
+    animation ← Initialize Animation object 
+    Peer.file_size ← Random value between 50 and 200 # assume file size is 50-200 MB.
+    Peer.piece_size ← Peer.file_size / TOTAL_PIECES #split the file into pieces
+    animation.generate_peers() # run the animation method
+    for i = 0 to num_peers - 1 do # num_peer is the input of RUN_SIMULATION, which refer to the number of peers at the beginning of the game.
+        upload_speed ← Random value between 1 and 5
+       download_speed ← Random value between 1 and 5 #initialize the peers abandwith
+       peer ← Create Peer with id i, upload_speed, download_speed, animation_object
+       add (peer) to a list of peer, peers
+       if i = 0 then
+           seeder/peer(0).file_pieces ← All file pieces/whole file # the seed has all file
+       else
+           other peer.file_pieces ← Random selection of file pieces
+    end for
+    for peer in peers do #connect all the peers
+       for other_peer in peers do
+           if peer ≠ other_peer then
+               peer.add (other_peer) to its neighbor
+           end if
+       end for
+    end for
+    set env/environment end time as SIMULATION_TIME
+    generate animation with name as animation.mp4, total 100 frame, 0.1 sec between each frame
+ end procedure
 
