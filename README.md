@@ -20,7 +20,7 @@ Expectations for Code Behavior and Real-Time Visualization
           Visualization of file transfer and congestion effects
           Each frame shows connections and transfer progress
           Updated every  0.1 seconds
-
+          
 4. plentity of Strategy implementation can be insert to the simulation
 
 During peer initialization in run_simulation() , each peer is assigned a random strategy from the available strategies implemntation in strategy class.
