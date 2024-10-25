@@ -21,78 +21,90 @@ Expectations for Code Behavior and Real-Time Visualization
           Each frame shows connections and transfer progress
           Updated every  0.1 seconds
 
+4. plentity of Strategy implementation can be insert to the simulation
+
+During peer initialization (run_simulation() function), each peer is assigned a random strategy from the available strategies in strategy class.
+
+Each peer uses the assigned strategy to allocate its upload bandwidth when requested by another peer. 
+The strategies include:
+1.equal_distribution_strategy: Evenly distributes bandwidth across all current requests.
+2.tit_for_tat: Allocates bandwidth based on the proportion of the file pieces uploaded to that peer in return.
+3.random_bandwidth: Randomly generates bandwidth allocation for each requesting peer.
+
 
 
 
 
 pseudocode
 ```python
-procedure RUN_SIMULATION(num_peers)
-    env ← Create simpy environment
-    peers ← Empty list
-    animation ← Initialize Animation object 
-    Peer.file_size ← Random value between 50 and 200 # assume file size is 50-200 MB.
-    Peer.piece_size ← Peer.file_size / TOTAL_PIECES #split the file into pieces
-    animation.generate_peers() # run the animation method
-    for i = 0 to num_peers - 1 do # num_peer is the input of RUN_SIMULATION, which refer to the number of peers at the beginning of the game.
-        upload_speed ← Random value between 1 and 5
-       download_speed ← Random value between 1 and 5 #initialize the peers abandwith
-       peer ← Create Peer with id i, upload_speed, download_speed, animation_object
-       add (peer) to a list of peer, peers
-       if i = 0 then
-           seeder/peer(0).file_pieces ← All file pieces/whole file # the seed has all file
-       else
-           other peer.file_pieces ← Random selection of file pieces
-    end for
-    for peer in peers do #connect all the peers
-       for other_peer in peers do
-           if peer ≠ other_peer then
-               peer.add (other_peer) to its neighbor
-           end if
-       end for
-    end for
-    set env/environment end time as SIMULATION_TIME
-    generate animation with name as animation.mp4, total 100 frame, 0.1 sec between each frame
- end procedure
+1. SET TOTAL_PIECES to 10
+2. SET SIMULATION_TIME to 100
+3. DEFINE Strategy class:
+   3.1 DEFINE equal_distribution_strategy(peer, target_peer_id):
+       - Calculate number of requests
+       - Divide upload speed by the number of requests (make sure to handle division by zero)
+       - RETURN available bandwidth per request
+   3.2 DEFINE tit_for_tat(peer, target_peer_id):
+       - If peer hasn't downloaded anything yet, fall back to equal_distribution_strategy
+       - Otherwise, check how much target peer has downloaded from this peer
+       - Calculate bandwidth ratio based on upload history
+       - RETURN the bandwidth ratio multiplied by the upload speed
+   3.3 DEFINE random_bandwidth_distribution(peer):
+       - Randomly distribute upload bandwidth across peers
+       - Store the allocation in peer's bandwidth_allocation
+   3.4 DEFINE allocate_bandwidth(peer, target_peer_id):
+       - If no allocation exists, generate a random distribution
+       - RETURN bandwidth allocation for the target peer
 
- class PEER(env, id, upload_speed, download_speed, animation)
-    self.file_pieces ← Empty set # File pieces self own
-    self.peers ← Empty list #the neigbor it connect to
-    self.current_requests ← 0 # Current number of requests from ur peer    
-    method ADD_PEER(peer)
-       self.peers add (peer) to its neighbors
-    end method
+4. DEFINE Peer class:
+   4.1 INIT peer with environment, id, upload/download speed, animation, and strategy
+       - Initialize file pieces and a list of other peers
+       - Create a resource to manage upload bandwidth
+       - SET upload_history and total_downloaded to zero
+       - START running the peer process
+   4.2 DEFINE add_peer(peer):
+       - ADD another peer to the list of known peers
+   4.3 DEFINE request_piece(piece, target):
+       - IF target has the piece:
+           - Log the request
+           - Request access to target's upload resource
+           - Calculate the available bandwidth using the chosen strategy (random, tit-for-tat, or equal)
+           - Download piece step-by-step, updating progress
+           - Call the animation to update the visual progress between peers
+           - Log completion and update peer's file pieces
+           - Update upload history and total downloaded size
+       - ELSE log that the piece is unavailable
+   4.4 DEFINE run():
+       - While peer doesn't have all pieces:
+           - Identify missing pieces
+           - Shuffle the list of peers and find one that has the piece
+           - Request the missing piece
+           - Wait for all requests to complete
 
-    method REQUEST_PIECE(piece, target)
-       if this piece in target.file_pieces then # Check if the target peer still has the requested
-          
-               while downloaded < piece_size do #check whether the piece is  finished
-                   available_bandwidth for each peers ← Calculate per request
-                   downloaded += bandwidth_per_time_step 
-                   yield env.timeout(0.1) # time step is 0.1 sec, which means the bandwith is dynamic for each 0.1 sec
-                   animation.update_progress((target.id, self.id), progress_percentage)
-               end while
-               self.file_pieces.add(piece) #Add the completed file piece to the owned set
-       end if
-    end method
+5. DEFINE Animation class:
+   5.1 INIT animation with number of peers:
+       - Create a directed graph for the peers
+       - Prepare for visual updates (progress bars)
+   5.2 DEFINE generate_peers():
+       - Add each peer to the graph
+       - Position them in a circular layout
+   5.3 DEFINE connect_peers(from_peer, to_peer):
+       - If no edge exists between peers, create one and set progress to 0%
+   5.4 DEFINE update_progress(edge, progress):
+       - Update the visual progress for the edge (file transfer)
+   5.5 DEFINE animate(i):
+       - Draw the graph, update peer connections and progress
+   5.6 DEFINE save_animation(filename, frames, interval):
+       - Animate the simulation and save it as an MP4 file
 
+6. DEFINE run_simulation(num_peers):
+   6.1 Create environment and initialize peers with random upload/download speeds
+   6.2 Assign strategies to peers randomly
+   6.3 For peer 0, give all pieces (seeder), others get random pieces
+   6.4 Connect all peers to each other
+   6.5 Run the simulation until SIMULATION_TIME
+   6.6 Save the animation
 
-    method RUN()
-       while len(self.file_pieces) < TOTAL_PIECES do
-           missing_pieces ← Set of missing file pieces
-           request_tasks ← Empty list
-           for piece in missing_pieces do
-               Shuffle self.peers
-               for peer in shuffled peers do
-                   if piece in peer.file_pieces then
-                       animation.connect_peers(peer.id, self.id)
-                       request_tasks.append(env.process(self.request_piece(piece, peer)))
-                   end if
-               end for
-           end for
-           yield env.all_of(request_tasks)
-       end while
-    end method
-
+7. CALL run_simulation(5)
 
 
