@@ -3,7 +3,7 @@
 Expectations for Code Behavior and Real-Time Visualization
 
 
-1.System starts and initializes
+1. System starts and initializes
           Random file size generated
           File divided into 10 pieces by default
           Each peer gets a random number of pieces from 0 to 9
@@ -12,11 +12,11 @@ Expectations for Code Behavior and Real-Time Visualization
           the seed can be removed by choice）
           request pieces when a new player is added to simpy environment
           
-2.Dynamic Download Process
+2. Dynamic Download Process
           System updates download progress every 0.1 seconds
           Real-time download speed depends on the congestion at each peer you are requesting from
 
-3.animation function
+3. animation function
           Visualization of file transfer and congestion effects
           Each frame shows connections and transfer progress
           Updated every  0.1 seconds
