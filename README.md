@@ -39,34 +39,34 @@ The strategies include:
 
 pseudocode
 ```python
-1. SET TOTAL_PIECES to 10
-2. SET SIMULATION_TIME to 100
-3. DEFINE Strategy class:
-   3.1 DEFINE equal_distribution_strategy(peer, target_peer_id):
+SET TOTAL_PIECES to 10
+SET SIMULATION_TIME to 100
+DEFINE Strategy class:
+   DEFINE equal_distribution_strategy(peer, target_peer_id):
        - Calculate number of requests
        - Divide upload speed by the number of requests (make sure to handle division by zero)
        - RETURN available bandwidth per request
-   3.2 DEFINE tit_for_tat(peer, target_peer_id):
+   DEFINE tit_for_tat(peer, target_peer_id):
        - If peer hasn't downloaded anything yet, fall back to equal_distribution_strategy
        - Otherwise, check how much target peer has downloaded from this peer
        - Calculate bandwidth ratio based on upload history
        - RETURN the bandwidth ratio multiplied by the upload speed
-   3.3 DEFINE random_bandwidth_distribution(peer):
+   DEFINE random_bandwidth_distribution(peer):
        - Randomly distribute upload bandwidth across peers
        - Store the allocation in peer's bandwidth_allocation
-   3.4 DEFINE allocate_bandwidth(peer, target_peer_id):
+   DEFINE allocate_bandwidth(peer, target_peer_id):
        - If no allocation exists, generate a random distribution
        - RETURN bandwidth allocation for the target peer
 
-4. DEFINE Peer class:
-   4.1 INIT peer with environment, id, upload/download speed, animation, and strategy
+DEFINE Peer class:
+   INIT peer with environment, id, upload/download speed, animation, and strategy
        - Initialize file pieces and a list of other peers
        - Create a resource to manage upload bandwidth
        - SET upload_history and total_downloaded to zero
        - START running the peer process
-   4.2 DEFINE add_peer(peer):
+   DEFINE add_peer(peer):
        - ADD another peer to the list of known peers
-   4.3 DEFINE request_piece(piece, target):
+   DEFINE request_piece(piece, target):
        - IF target has the piece:
            - Log the request
            - Request access to target's upload resource
@@ -76,37 +76,37 @@ pseudocode
            - Log completion and update peer's file pieces
            - Update upload history and total downloaded size
        - ELSE log that the piece is unavailable
-   4.4 DEFINE run():
+   DEFINE run():
        - While peer doesn't have all pieces:
            - Identify missing pieces
            - Shuffle the list of peers and find one that has the piece
            - Request the missing piece
            - Wait for all requests to complete
 
-5. DEFINE Animation class:
-   5.1 INIT animation with number of peers:
+DEFINE Animation class:
+   INIT animation with number of peers:
        - Create a directed graph for the peers
        - Prepare for visual updates (progress bars)
-   5.2 DEFINE generate_peers():
+   DEFINE generate_peers():
        - Add each peer to the graph
        - Position them in a circular layout
-   5.3 DEFINE connect_peers(from_peer, to_peer):
+   DEFINE connect_peers(from_peer, to_peer):
        - If no edge exists between peers, create one and set progress to 0%
-   5.4 DEFINE update_progress(edge, progress):
+   DEFINE update_progress(edge, progress):
        - Update the visual progress for the edge (file transfer)
-   5.5 DEFINE animate(i):
+   DEFINE animate(i):
        - Draw the graph, update peer connections and progress
-   5.6 DEFINE save_animation(filename, frames, interval):
+   DEFINE save_animation(filename, frames, interval):
        - Animate the simulation and save it as an MP4 file
 
-6. DEFINE run_simulation(num_peers):
-   6.1 Create environment and initialize peers with random upload/download speeds
-   6.2 Assign strategies to peers randomly
-   6.3 For peer 0, give all pieces (seeder), others get random pieces
-   6.4 Connect all peers to each other
-   6.5 Run the simulation until SIMULATION_TIME
-   6.6 Save the animation
+DEFINE run_simulation(num_peers):
+   Create environment and initialize peers with random upload/download speeds
+   Assign strategies to peers randomly
+   For peer 0, give all pieces (seeder), others get random pieces
+   Connect all peers to each other
+   Run the simulation until SIMULATION_TIME
+   Save the animation
 
-7. CALL run_simulation(5)
+CALL run_simulation(5)
 
 
