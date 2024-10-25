@@ -23,13 +23,15 @@ Expectations for Code Behavior and Real-Time Visualization
 
 4. plentity of Strategy implementation can be insert to the simulation
 
-During peer initialization (run_simulation() function), each peer is assigned a random strategy from the available strategies in strategy class.
+During peer initialization in run_simulation() , each peer is assigned a random strategy from the available strategies implemntation in strategy class.
 
-Each peer uses the assigned strategy to allocate its upload bandwidth when requested by another peer. 
+Each peer uses the assigned strategy to allocate its upload bandwidth or respond the request from other peers. 
 The strategies include:
 1.equal_distribution_strategy: Evenly distributes bandwidth across all current requests.
-2.tit_for_tat: Allocates bandwidth based on the proportion of the file pieces uploaded to that peer in return.
-3.random_bandwidth: Randomly generates bandwidth allocation for each requesting peer.
+
+2.tit_for_tat: Allocates bandwidth based on the cumulative proportion of the file pieces uploaded to that peer in the pass.
+
+3.random_bandwidth: Randomly generates bandwidth allocation for each requesting peer at the begining of game, and the allocation won't be changed
 
 
 
