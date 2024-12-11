@@ -44,26 +44,6 @@ SET total_pieces TO 10 # Total number of file pieces
 SET simulation_time TO 100 # Maximum simulation duration
 SET request_timeout TO 10 # Timeout threshold for a single request
   
-# Simulation Logic
-DEFINE FUNCTION run_simulation(num_peers):
-  INITIALIZE the simulation environment
-  CREATE peers WITH random speeds and strategies
-  CONNECT all peers to each other
-  START the simulation and RUN until the time limit
-  DISPLAY results including:
-   - Total download times per peer
-   - Average download times per strategy
-  RETURN results
-
-DEFINE FUNCTION calculate_combined_averages(num_simulations, num_peers):
-  INITIALIZE result containers FOR each combination of strategies
-  FOR simulation_index IN range(num_simulations):
-   RUN a single simulation
-   RECORD the results FOR each peer’s strategy combination
-  CALCULATE averages FOR all strategy combinations
-  RETURN combined averages
-
-
 pseudocode for code version 3.0
 ```python
 # Request Strategies
@@ -85,65 +65,65 @@ METHOD avoid_excessive_requests(missing_pieces, peers, requesting_pieces):
  INITIALIZE request_tasks AS an empty list
  INITIALIZE peer_request_count AS a dictionary with peer ids as keys and 0 as default
  FOR piece IN missing_pieces:
-  FOR peer IN peers:
-   IF peer owns the piece:
-    INCREMENT peer_request_count[peer.id] BY 1
- CALCULATE scarcity_level FOR each piece IN missing_pieces
- SORT missing_pieces BY scarcity_level (ascending)
- FOR piece IN sorted missing_pieces:
-  IF piece IS IN requesting_pieces:
-   CONTINUE
-  FIND all peers who own the piece
-  SORT those peers BY peer_request_count (fewer pieces = higher priority)
-  SELECT the best peer
-  ADD request to request_tasks
-  MARK piece AS requested in requesting_pieces
- RETURN request_tasks
+    FOR peer IN peers:
+       IF peer owns the piece:
+            INCREMENT peer_request_count[peer.id] BY 1
+    CALCULATE scarcity_level FOR each piece IN missing_pieces
+    SORT missing_pieces BY scarcity_level (ascending)
+    FOR piece IN sorted missing_pieces:
+       IF piece IS IN requesting_pieces:
+           CONTINUE
+       FIND all peers who own the piece
+       SORT those peers BY peer_request_count (fewer pieces = higher priority)
+       SELECT the best peer
+       ADD request to request_tasks
+       MARK piece AS requested in requesting_pieces
+    RETURN request_tasks
 
 # Bandwidth Allocation Strategies
 DEFINE CLASS Strategy:
   METHOD random_bandwidth_distribution(peer):
-   INITIALIZE total_bandwidth AS peer.upload_speed
-   INITIALIZE allocation_map AS an empty dictionary
+   - INITIALIZE total_bandwidth AS peer.upload_speed
+   - INITIALIZE allocation_map AS an empty dictionary
    FOR target_peer IN peer.peers:
-    ALLOCATE random bandwidth (up to total_bandwidth / number_of_peers)
-    UPDATE allocation_map WITH target_peer and allocated bandwidth
-    DECREASE total_bandwidth BY allocated bandwidth
+    - ALLOCATE random bandwidth (up to total_bandwidth / number_of_peers)
+    - UPDATE allocation_map WITH target_peer and allocated bandwidth
+    - DECREASE total_bandwidth BY allocated bandwidth
    RETURN allocation_map
  METHOD allocate_bandwidth(peer, target_peer_id):
   IF allocation_map IS empty:
-   CALL random_bandwidth_distribution(peer)
+   - CALL random_bandwidth_distribution(peer)
   RETURN allocation_map[target_peer_id]
 
 # Peer Behavior
 DEFINE CLASS Peer:
- METHOD __init__(env, id, upload_speed, download_speed, strategy, request_strategy):
-  STORE peer details (id, speed, etc.)
-  INITIALIZE upload and download tracking variables
-  START peer simulation loop
-METHOD request_piece(piece, target_peer):
- CHECK IF target_peer owns the piece
- IF NOT:
-  RETURN failure
- ELSE:
-  START download
-  WHILE download progress < piece_size:
-   CALCULATE bandwidth using the peer’s strategy
-   INCREASE download progress based on bandwidth
-   CHECK timeout condition
-   IF timed out:
-    RETURN failure
-  MARK piece AS downloaded
-  UPDATE records for download completion
+  METHOD __init__(env, id, upload_speed, download_speed, strategy, request_strategy):
+     STORE peer details (id, speed, etc.)
+     INITIALIZE upload and download tracking variables
+     START peer simulation loop
+ METHOD request_piece(piece, target_peer):
+     CHECK IF target_peer owns the piece
+     IF NOT:
+          RETURN failure
+     ELSE:
+          START download
+          WHILE download progress < piece_size:
+             CALCULATE bandwidth using the peer’s strategy
+             INCREASE download progress based on bandwidth
+             CHECK timeout condition
+             IF timed out:
+                RETURN failure
+             MARK piece AS downloaded
+             UPDATE records for download completion
   
 METHOD run():
 WHILE total_pieces NOT downloaded:
-  FIND all missing pieces
-  CREATE request tasks for missing pieces
-  WAIT for all request tasks to finish
-  CHECK for unfinished pieces
-  RETRY requests for unfinished pieces IF any
- RETURN completed download information
+  - FIND all missing pieces
+  - CREATE request tasks for missing pieces
+  - WAIT for all request tasks to finish
+  - CHECK for unfinished pieces
+  - RETRY requests for unfinished pieces IF any
+RETURN completed download information
 
 # Animation System
 DEFINE CLASS Animation:
@@ -157,7 +137,26 @@ DEFINE CLASS Animation:
  METHOD save_animation(filename, duration):
     - SAVE the animation AS a video file
     - RETURN confirmation
-  
+
+# Simulation Logic
+DEFINE FUNCTION run_simulation(num_peers):
+  INITIALIZE the simulation environment
+  CREATE peers WITH random speeds and strategies
+  CONNECT all peers to each other
+  START the simulation and RUN until the time limit
+  DISPLAY results including:
+   - Total download times per peer
+   - Average download times per strategy
+  RETURN results
+
+DEFINE FUNCTION calculate_combined_averages(num_simulations, num_peers):
+  INITIALIZE result containers FOR each combination of strategies
+  FOR simulation_index IN range(num_simulations):
+          RUN a single simulation
+          RECORD the results FOR each peer’s strategy combination
+  CALCULATE averages FOR all strategy combinations
+  RETURN combined averages
+
 version 2.0
 ```python
 SET TOTAL_PIECES to 10
