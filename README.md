@@ -40,36 +40,38 @@ SET simulation_time TO 100 # Maximum simulation duration
 SET request_timeout TO 10 # Timeout threshold for a single request
 # Request Strategies
 DEFINE CLASS RequestStrategy:
-METHOD random_peer_selection(missing_pieces, peers, requesting_pieces):
-INITIALIZE request_tasks AS an empty list
-FOR piece IN missing_pieces:
-IF piece IS IN requesting_pieces:
-CONTINUE # Skip already requested pieces
-SHUFFLE the list of peers
-FOR target_peer IN shuffled peers:
-IF target_peer owns the piece:
-ADD request to request_tasks
-MARK piece AS requested in requesting_pieces
-BREAK the loop (only one peer per piece)
-RETURN request_tasks
+  METHOD random_peer_selection(missing_pieces, peers, requesting_pieces):
+    INITIALIZE request_tasks AS an empty list
+    FOR piece IN missing_pieces:
+     IF piece IS IN requesting_pieces:
+       CONTINUE # Skip already requested pieces
+     SHUFFLE the list of peers
+     FOR target_peer IN shuffled peers:
+      IF target_peer owns the piece:
+        ADD request to request_tasks
+        MARK piece AS requested in requesting_pieces
+        BREAK the loop (only one peer per piece)
+    RETURN request_tasks
+
 METHOD avoid_excessive_requests(missing_pieces, peers, requesting_pieces):
-INITIALIZE request_tasks AS an empty list
-INITIALIZE peer_request_count AS a dictionary with peer ids as keys and 0 as default
-FOR piece IN missing_pieces:
-FOR peer IN peers:
-IF peer owns the piece:
-INCREMENT peer_request_count[peer.id] BY 1
-CALCULATE scarcity_level FOR each piece IN missing_pieces
-SORT missing_pieces BY scarcity_level (ascending)
-FOR piece IN sorted missing_pieces:
-IF piece IS IN requesting_pieces:
-CONTINUE
-FIND all peers who own the piece
-SORT those peers BY peer_request_count (fewer pieces = higher priority)
-SELECT the best peer
-ADD request to request_tasks
-MARK piece AS requested in requesting_pieces
-RETURN request_tasks
+ INITIALIZE request_tasks AS an empty list
+ INITIALIZE peer_request_count AS a dictionary with peer ids as keys and 0 as default
+ FOR piece IN missing_pieces:
+  FOR peer IN peers:
+   IF peer owns the piece:
+    INCREMENT peer_request_count[peer.id] BY 1
+ CALCULATE scarcity_level FOR each piece IN missing_pieces
+ SORT missing_pieces BY scarcity_level (ascending)
+ FOR piece IN sorted missing_pieces:
+  IF piece IS IN requesting_pieces:
+   CONTINUE
+  FIND all peers who own the piece
+  SORT those peers BY peer_request_count (fewer pieces = higher priority)
+  SELECT the best peer
+  ADD request to request_tasks
+  MARK piece AS requested in requesting_pieces
+ RETURN request_tasks
+
 # Bandwidth Allocation Strategies
 DEFINE CLASS Strategy:
 METHOD random_bandwidth_distribution(peer):
