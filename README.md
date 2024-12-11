@@ -33,11 +33,18 @@ The strategies include:
 
 3.random_bandwidth: Randomly generates bandwidth allocation for each requesting peer at the begining of game, and the allocation won't be changed
 
-pseudocode for code version 3.0
+# Execution
+SET num_simulations TO 300
+SET num_peers TO 10
+CALL calculate_combined_averages(num_simulations, num_peers)
+DISPLAY the combined averages in a clear format
+
 # Simulation Configuration
 SET total_pieces TO 10 # Total number of file pieces
 SET simulation_time TO 100 # Maximum simulation duration
 SET request_timeout TO 10 # Timeout threshold for a single request
+
+pseudocode for code version 3.0
 # Request Strategies
 DEFINE CLASS RequestStrategy:
   METHOD random_peer_selection(missing_pieces, peers, requesting_pieces):
@@ -74,81 +81,80 @@ METHOD avoid_excessive_requests(missing_pieces, peers, requesting_pieces):
 
 # Bandwidth Allocation Strategies
 DEFINE CLASS Strategy:
-METHOD random_bandwidth_distribution(peer):
-INITIALIZE total_bandwidth AS peer.upload_speed
-INITIALIZE allocation_map AS an empty dictionary
-FOR target_peer IN peer.peers:
-ALLOCATE random bandwidth (up to total_bandwidth / number_of_peers)
-UPDATE allocation_map WITH target_peer and allocated bandwidth
-DECREASE total_bandwidth BY allocated bandwidth
-RETURN allocation_map
-METHOD allocate_bandwidth(peer, target_peer_id):
-IF allocation_map IS empty:
-CALL random_bandwidth_distribution(peer)
-RETURN allocation_map[target_peer_id]
+  METHOD random_bandwidth_distribution(peer):
+   INITIALIZE total_bandwidth AS peer.upload_speed
+   INITIALIZE allocation_map AS an empty dictionary
+   FOR target_peer IN peer.peers:
+    ALLOCATE random bandwidth (up to total_bandwidth / number_of_peers)
+    UPDATE allocation_map WITH target_peer and allocated bandwidth
+    DECREASE total_bandwidth BY allocated bandwidth
+   RETURN allocation_map
+ METHOD allocate_bandwidth(peer, target_peer_id):
+  IF allocation_map IS empty:
+   CALL random_bandwidth_distribution(peer)
+  RETURN allocation_map[target_peer_id]
+
 # Peer Behavior
 DEFINE CLASS Peer:
-METHOD __init__(env, id, upload_speed, download_speed, strategy, request_strategy):
-STORE peer details (id, speed, etc.)
-INITIALIZE upload and download tracking variables
-START peer simulation loop
+ METHOD __init__(env, id, upload_speed, download_speed, strategy, request_strategy):
+  STORE peer details (id, speed, etc.)
+  INITIALIZE upload and download tracking variables
+  START peer simulation loop
 METHOD request_piece(piece, target_peer):
-CHECK IF target_peer owns the piece
-IF NOT:
-RETURN failure
-ELSE:
-START download
-WHILE download progress < piece_size:
-CALCULATE bandwidth using the peer’s strategy
-INCREASE download progress based on bandwidth
-CHECK timeout condition
-IF timed out:
-RETURN failure
-MARK piece AS downloaded
-UPDATE records for download completion
+ CHECK IF target_peer owns the piece
+ IF NOT:
+  RETURN failure
+ ELSE:
+  START download
+  WHILE download progress < piece_size:
+   CALCULATE bandwidth using the peer’s strategy
+   INCREASE download progress based on bandwidth
+   CHECK timeout condition
+   IF timed out:
+    RETURN failure
+  MARK piece AS downloaded
+  UPDATE records for download completion
+  
 METHOD run():
 WHILE total_pieces NOT downloaded:
-FIND all missing pieces
-CREATE request tasks for missing pieces
-WAIT for all request tasks to finish
-CHECK for unfinished pieces
-RETRY requests for unfinished pieces IF any
-RETURN completed download information
+  FIND all missing pieces
+  CREATE request tasks for missing pieces
+  WAIT for all request tasks to finish
+  CHECK for unfinished pieces
+  RETRY requests for unfinished pieces IF any
+ RETURN completed download information
+
 # Animation System
 DEFINE CLASS Animation:
 METHOD generate_peers(num_peers):
-ADD nodes FOR all peers
-ARRANGE them in a circular layout
+  ADD nodes FOR all peers
+  ARRANGE them in a circular layout
 METHOD connect_peers(from_peer, to_peer):
-ADD an edge BETWEEN the two peers IF not already connected
+  ADD an edge BETWEEN the two peers IF not already connected
 METHOD update_progress(edge, progress):
-UPDATE the progress label ON the specified edge
+  UPDATE the progress label ON the specified edge
 METHOD save_animation(filename, duration):
-SAVE the animation AS a video file
-RETURN confirmation
+  SAVE the animation AS a video file
+  RETURN confirmation
+  
 # Simulation Logic
 DEFINE FUNCTION run_simulation(num_peers):
-INITIALIZE the simulation environment
-CREATE peers WITH random speeds and strategies
-CONNECT all peers to each other
-START the simulation and RUN until the time limit
-DISPLAY results including:
-- Total download times per peer
-- Average download times per strategy
-RETURN results
-DEFINE FUNCTION calculate_combined_averages(num_simulations, num_peers):
-INITIALIZE result containers FOR each combination of strategies
-FOR simulation_index IN range(num_simulations):
-RUN a single simulation
-RECORD the results FOR each peer’s strategy combination
-CALCULATE averages FOR all strategy combinations
-RETURN combined averages
-# Execution
-SET num_simulations TO 300
-SET num_peers TO 10
-CALL calculate_combined_averages(num_simulations, num_peers)
-DISPLAY the combined averages in a clear format
+  INITIALIZE the simulation environment
+  CREATE peers WITH random speeds and strategies
+  CONNECT all peers to each other
+  START the simulation and RUN until the time limit
+  DISPLAY results including:
+   - Total download times per peer
+   - Average download times per strategy
+  RETURN results
 
+DEFINE FUNCTION calculate_combined_averages(num_simulations, num_peers):
+  INITIALIZE result containers FOR each combination of strategies
+  FOR simulation_index IN range(num_simulations):
+   RUN a single simulation
+   RECORD the results FOR each peer’s strategy combination
+  CALCULATE averages FOR all strategy combinations
+  RETURN combined averages
 
 version 2.0
 ```python
