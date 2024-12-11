@@ -43,6 +43,26 @@ DISPLAY the combined averages in a clear format
 SET total_pieces TO 10 # Total number of file pieces
 SET simulation_time TO 100 # Maximum simulation duration
 SET request_timeout TO 10 # Timeout threshold for a single request
+  
+# Simulation Logic
+DEFINE FUNCTION run_simulation(num_peers):
+  INITIALIZE the simulation environment
+  CREATE peers WITH random speeds and strategies
+  CONNECT all peers to each other
+  START the simulation and RUN until the time limit
+  DISPLAY results including:
+   - Total download times per peer
+   - Average download times per strategy
+  RETURN results
+
+DEFINE FUNCTION calculate_combined_averages(num_simulations, num_peers):
+  INITIALIZE result containers FOR each combination of strategies
+  FOR simulation_index IN range(num_simulations):
+   RUN a single simulation
+   RECORD the results FOR each peer’s strategy combination
+  CALCULATE averages FOR all strategy combinations
+  RETURN combined averages
+
 
 pseudocode for code version 3.0
 # Request Strategies
@@ -137,25 +157,6 @@ METHOD save_animation(filename, duration):
   SAVE the animation AS a video file
   RETURN confirmation
   
-# Simulation Logic
-DEFINE FUNCTION run_simulation(num_peers):
-  INITIALIZE the simulation environment
-  CREATE peers WITH random speeds and strategies
-  CONNECT all peers to each other
-  START the simulation and RUN until the time limit
-  DISPLAY results including:
-   - Total download times per peer
-   - Average download times per strategy
-  RETURN results
-
-DEFINE FUNCTION calculate_combined_averages(num_simulations, num_peers):
-  INITIALIZE result containers FOR each combination of strategies
-  FOR simulation_index IN range(num_simulations):
-   RUN a single simulation
-   RECORD the results FOR each peer’s strategy combination
-  CALCULATE averages FOR all strategy combinations
-  RETURN combined averages
-
 version 2.0
 ```python
 SET TOTAL_PIECES to 10
