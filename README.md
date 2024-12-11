@@ -65,6 +65,7 @@ DEFINE FUNCTION calculate_combined_averages(num_simulations, num_peers):
 
 
 pseudocode for code version 3.0
+```python
 # Request Strategies
 DEFINE CLASS RequestStrategy:
   METHOD random_peer_selection(missing_pieces, peers, requesting_pieces):
