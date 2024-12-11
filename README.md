@@ -146,16 +146,16 @@ WHILE total_pieces NOT downloaded:
 
 # Animation System
 DEFINE CLASS Animation:
-METHOD generate_peers(num_peers):
-  ADD nodes FOR all peers
-  ARRANGE them in a circular layout
-METHOD connect_peers(from_peer, to_peer):
-  ADD an edge BETWEEN the two peers IF not already connected
-METHOD update_progress(edge, progress):
-  UPDATE the progress label ON the specified edge
-METHOD save_animation(filename, duration):
-  SAVE the animation AS a video file
-  RETURN confirmation
+ METHOD generate_peers(num_peers):
+    - ADD nodes FOR all peers
+    - ARRANGE them in a circular layout
+ METHOD connect_peers(from_peer, to_peer):
+    - ADD an edge BETWEEN the two peers IF not already connected
+ METHOD update_progress(edge, progress):
+    - UPDATE the progress label ON the specified edge
+ METHOD save_animation(filename, duration):
+    - SAVE the animation AS a video file
+    - RETURN confirmation
   
 version 2.0
 ```python
